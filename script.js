@@ -5,61 +5,96 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrContainer = document.getElementById('qrcode');
     const placeholder = document.getElementById('placeholder');
     const downloadBtn = document.getElementById('download-btn');
+    const downloadSvgBtn = document.getElementById('download-svg-btn');
 
-    let qrCode = null;
-
-    const generateQRCode = () => {
+    const generateQRCode = async () => {
         const text = qrInput.value.trim();
         const size = parseInt(sizeSelect.value);
         const color = colorDark.value;
 
-        qrContainer.innerHTML = '';
-
         if (text === '') {
+            qrContainer.innerHTML = '';
             placeholder.style.display = 'block';
-            downloadBtn.classList.add('disabled');
-            downloadBtn.disabled = true;
+            [downloadBtn, downloadSvgBtn].forEach(btn => {
+                btn.classList.add('disabled');
+                btn.disabled = true;
+            });
             return;
         }
 
         placeholder.style.display = 'none';
-        downloadBtn.classList.remove('disabled');
-        downloadBtn.disabled = false;
-
-        qrCode = new QRCode(qrContainer, {
-            text: text,
-            width: size,
-            height: size,
-            colorDark: color,
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
+        [downloadBtn, downloadSvgBtn].forEach(btn => {
+            btn.classList.remove('disabled');
+            btn.disabled = false;
         });
 
-        qrContainer.style.opacity = '0';
-        setTimeout(() => {
-            qrContainer.style.opacity = '1';
-        }, 50);
+        try {
+            qrContainer.innerHTML = '';
+            const canvas = document.createElement('canvas');
+            qrContainer.appendChild(canvas);
+
+            await QRCode.toCanvas(canvas, text, {
+                width: size,
+                margin: 2,
+                color: {
+                    dark: color,
+                    light: '#ffffff'
+                },
+                errorCorrectionLevel: 'H'
+            });
+
+            qrContainer.style.opacity = '0';
+            setTimeout(() => {
+                qrContainer.style.opacity = '1';
+            }, 50);
+
+        } catch (err) {
+            console.error(err);
+        }
     };
 
-    const downloadQR = () => {
-        const img = qrContainer.querySelector('img');
+    const downloadPNG = () => {
         const canvas = qrContainer.querySelector('canvas');
-        
-        if (img) {
+        if (!canvas) return;
+
+        const link = document.createElement('a');
+        link.download = `qrcode-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    };
+
+    const downloadSVG = async () => {
+        const text = qrInput.value.trim();
+        const color = colorDark.value;
+        const size = parseInt(sizeSelect.value);
+
+        try {
+            const svgString = await QRCode.toString(text, {
+                type: 'svg',
+                width: size,
+                margin: 2,
+                color: {
+                    dark: color,
+                    light: '#ffffff'
+                },
+                errorCorrectionLevel: 'H'
+            });
+
+            const blob = new Blob([svgString], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
-            link.download = `qrcode-${Date.now()}.png`;
-            link.href = img.src;
+            link.href = url;
+            link.download = `qrcode-${Date.now()}.svg`;
             link.click();
-        } else if (canvas) {
-            const link = document.createElement('a');
-            link.download = `qrcode-${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error(err);
         }
     };
 
     qrInput.addEventListener('input', generateQRCode);
     sizeSelect.addEventListener('change', generateQRCode);
     colorDark.addEventListener('input', generateQRCode);
-    downloadBtn.addEventListener('click', downloadQR);
+    downloadBtn.addEventListener('click', downloadPNG);
+    downloadSvgBtn.addEventListener('click', downloadSVG);
 });
