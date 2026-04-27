@@ -37,13 +37,30 @@
                 <div class="config-item">
                     <label>Tamanho</label>
                     <select id="size-select">
-                        <option value="128">Pequeno (128x128)</option>
-                        <option value="256" selected>Médio (256x256)</option>
-                        <option value="512">Grande (512x512)</option>
+                        <option value="128">Pequeno</option>
+                        <option value="256" selected>Médio</option>
+                        <option value="512">Grande</option>
                     </select>
                 </div>
                 <div class="config-item">
-                    <label>Cor do QR</label>
+                    <label>Margem</label>
+                    <select id="margin-select">
+                        <option value="1">Mínima</option>
+                        <option value="4" selected>Padrão</option>
+                        <option value="8">Ampla</option>
+                    </select>
+                </div>
+                <div class="config-item">
+                    <label>Precisão</label>
+                    <select id="error-select">
+                        <option value="L">Baixa (Limpo)</option>
+                        <option value="M" selected>Média (Ideal)</option>
+                        <option value="Q">Alta</option>
+                        <option value="H">Máxima (Denso)</option>
+                    </select>
+                </div>
+                <div class="config-item">
+                    <label>Cor</label>
                     <input type="color" id="color-dark" value="#000000">
                 </div>
             </div>
