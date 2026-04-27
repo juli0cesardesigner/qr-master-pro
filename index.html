@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Master Pro | Gerador de QR Code Premium</title>
+    <meta name="description" content="Gerador de QR Code de alta performance com interface moderna e minimalista.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <main class="app-container">
+        <header class="header">
+            <h1 class="title">QR Master <span>Pro</span></h1>
+            <p class="subtitle">Gere códigos QR instantâneos com elegância e precisão.</p>
+        </header>
+
+        <section class="card glass">
+            <div class="input-group">
+                <label for="qr-input">Conteúdo (URL ou Texto)</label>
+                <div class="input-wrapper">
+                    <input type="text" id="qr-input" placeholder="https://exemplo.com" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="customization">
+                <div class="config-item">
+                    <label>Tamanho</label>
+                    <select id="size-select">
+                        <option value="128">Pequeno (128x128)</option>
+                        <option value="256" selected>Médio (256x256)</option>
+                        <option value="512">Grande (512x512)</option>
+                    </select>
+                </div>
+                <div class="config-item">
+                    <label>Cor do QR</label>
+                    <input type="color" id="color-dark" value="#000000">
+                </div>
+            </div>
+
+            <div class="qr-output-container">
+                <div id="qrcode" class="qr-display"></div>
+                <div class="placeholder-text" id="placeholder">Insira algo acima para gerar...</div>
+            </div>
+
+            <div class="actions">
+                <button id="download-btn" class="btn primary disabled" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download PNG
+                </button>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>&copy; 2026 QR Master Pro. Criado com visual excellence.</p>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
