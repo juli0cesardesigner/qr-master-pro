@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadBtn = document.getElementById('download-btn');
     const downloadSvgBtn = document.getElementById('download-svg-btn');
 
-    const generateQRCode = async () => {
+    const generateQRCode = () => {
         const text = qrInput.value.trim();
         const size = parseInt(sizeSelect.value);
         const color = colorDark.value;
@@ -30,18 +30,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             qrContainer.innerHTML = '';
-            const canvas = document.createElement('canvas');
-            qrContainer.appendChild(canvas);
-
-            await QRCode.toCanvas(canvas, text, {
-                width: size,
-                margin: 2,
-                color: {
-                    dark: color,
-                    light: '#ffffff'
-                },
-                errorCorrectionLevel: 'H'
+            
+            const el = kjua({
+                render: 'image',
+                text: text,
+                size: size,
+                fill: color,
+                back: '#ffffff',
+                rounded: 0,
+                quiet: 1,
+                crisp: true
             });
+
+            qrContainer.appendChild(el);
 
             qrContainer.style.opacity = '0';
             setTimeout(() => {
@@ -49,37 +50,38 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 50);
 
         } catch (err) {
-            console.error(err);
+            console.error('Erro ao gerar QR:', err);
         }
     };
 
     const downloadPNG = () => {
-        const canvas = qrContainer.querySelector('canvas');
-        if (!canvas) return;
+        const img = qrContainer.querySelector('img');
+        if (!img) return;
 
         const link = document.createElement('a');
         link.download = `qrcode-${Date.now()}.png`;
-        link.href = canvas.toDataURL('image/png');
+        link.href = img.src;
         link.click();
     };
 
-    const downloadSVG = async () => {
+    const downloadSVG = () => {
         const text = qrInput.value.trim();
         const color = colorDark.value;
         const size = parseInt(sizeSelect.value);
 
         try {
-            const svgString = await QRCode.toString(text, {
-                type: 'svg',
-                width: size,
-                margin: 2,
-                color: {
-                    dark: color,
-                    light: '#ffffff'
-                },
-                errorCorrectionLevel: 'H'
+            const svgEl = kjua({
+                render: 'svg',
+                text: text,
+                size: size,
+                fill: color,
+                back: '#ffffff',
+                quiet: 1
             });
 
+            const serializer = new XMLSerializer();
+            const svgString = serializer.serializeToString(svgEl);
+            
             const blob = new Blob([svgString], { type: 'image/svg+xml' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -88,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             link.click();
             URL.revokeObjectURL(url);
         } catch (err) {
-            console.error(err);
+            console.error('Erro ao baixar SVG:', err);
         }
     };
 
